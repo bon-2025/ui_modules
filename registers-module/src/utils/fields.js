@@ -10,7 +10,7 @@ export const personalInfoFields = [
   { name: "dateOfBirth", label: "Date of Birth", type: "date" },
   { name: "dateOfDeath", label: "Date of Death", type: "date" },
 
-  { name: "ageAtDeath", label: "Age at Death (Auto)", type: "text", disabled: true },
+  { name: "ageAtDeath", label: "Age at Death", type: "text", disabled: true },
 
   { name: "citizenship", label: "Citizenship", type: "text" },
   { name: "religion", label: "Religion", type: "text" },
