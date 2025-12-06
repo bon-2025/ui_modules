@@ -7,6 +7,7 @@ function App() {
 
   return (
     <div>
+      <h1>Testing git teams</h1>
       <DynamicNavbar userRole={userRole} />
       <Dashboard />
     </div>
