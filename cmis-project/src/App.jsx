@@ -1,17 +1,20 @@
-import React from 'react';
-import DynamicNavbar from './components/Navbar';
-import Dashboard from './pages/Dashboard';
-import { DeathFormWizard } from 'registers-module';
-
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import DynamicNavbar from "./components/Navbar";
+import { routeConfig } from "./config/routeConfig";
 
 function App() {
-  const userRole = 'admin'; // Role can be dynamic based on login
+  const userRole = "admin"; // dynamic
 
   return (
-    <div>
+    <Router>
       <DynamicNavbar userRole={userRole} />
-      <DeathFormWizard/>
-    </div>
+      <Routes>
+        {Object.entries(routeConfig).map(([path, Component]) => (
+           <Route key={path} path={path} element={Component } />
+        ))}
+      </Routes>
+    </Router>
   );
 }
 

@@ -1,13 +1,14 @@
 import React from 'react';
 import { Navbar, Nav, NavDropdown, Container } from 'react-bootstrap';
-import { navItems } from '../utils/navItems'; // import from utils
-import './DynamicNavbar.css'; // import custom CSS for hover
+import { Link } from 'react-router-dom';
+import { navItems } from '../config/navItems';
+import './DynamicNavbar.css';
 
 const DynamicNavbar = ({ userRole }) => {
   return (
     <Navbar bg="dark" variant="dark" expand="lg" className="dynamic-navbar">
       <Container>
-        <Navbar.Brand href="/">CMIS</Navbar.Brand>
+        <Navbar.Brand as={Link} to="/">CMIS</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto">
@@ -22,7 +23,8 @@ const DynamicNavbar = ({ userRole }) => {
                   {item.dropdown.map((subItem, subIdx) => (
                     <NavDropdown.Item
                       key={subIdx}
-                      href={subItem.link}
+                      as={Link}
+                      to={subItem.link}
                       className="nav-hover"
                     >
                       {subItem.name}
@@ -30,7 +32,12 @@ const DynamicNavbar = ({ userRole }) => {
                   ))}
                 </NavDropdown>
               ) : (
-                <Nav.Link key={idx} href={item.link} className="nav-hover">
+                <Nav.Link
+                  key={idx}
+                  as={Link}
+                  to={item.link}
+                  className="nav-hover"
+                >
                   {item.name}
                 </Nav.Link>
               )

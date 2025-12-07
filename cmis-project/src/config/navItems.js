@@ -23,13 +23,11 @@ export const navItems = {
     {
       name: 'Settings',
       dropdown: [
-        { name: 'Activity Log', link: '/Settings/activity-log' },
-        { name: 'Backup Database', link: '/Settings/backup-database' }
+        { name: 'Activity Log', link: '/settings/activity-log' },
+        { name: 'Backup Database', link: '/settings/backup-database' }
       ]
     },
-
   ],
-
   staff: [
     { name: 'Dashboard', link: '/dashboard' },
     { name: 'Analytics', link: '/analytics' },
