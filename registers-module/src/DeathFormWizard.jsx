@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Container, Card, Button } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,20 +31,18 @@ export default function DeathFormWizard() {
     defaultValues: deathFormDefaultValues,
   });
 
+
   const { watch, setValue, trigger, register, formState: { errors }, handleSubmit } = form;
 
-  // WATCHED VALUES
   const dob = watch("dateOfBirth");
   const dod = watch("dateOfDeath");
   const startDate = watch("startDate");
   const cemeteryArea = watch("cemeteryArea");
 
-  // HOOKS
   useAutoEndDate(startDate, setValue);
   useAutoAge(dob, dod, setValue);
   const lotOptions = useCemeteryLots(cemeteryArea, setValue);
 
-  // DYNAMIC LOTS IN FORM STEPS
   const currentSections = formSteps[page].map(section => ({
     ...section,
     fields: section.fields.map(f =>
@@ -52,7 +50,6 @@ export default function DeathFormWizard() {
     )
   }));
 
-  // NEXT PAGE VALIDATION
   const nextPage = async () => {
     const nestedFields = formSteps[page].flatMap(section =>
       section.fields.flatMap(f =>
@@ -62,7 +59,6 @@ export default function DeathFormWizard() {
       )
     );
 
-    // Additional custom check
     if (nestedFields.includes("dateOfBirth") && nestedFields.includes("dateOfDeath")) {
       if (new Date(dob) > new Date(dod)) {
         setShowDateError(true);
@@ -76,7 +72,6 @@ export default function DeathFormWizard() {
 
   const prevPage = () => setPage(p => p - 1);
 
-  // FINAL SUBMIT
   const onSubmit = async (data) => {
     try {
       const finalPayload = {
@@ -109,10 +104,7 @@ export default function DeathFormWizard() {
           />
 
           <div className="d-flex justify-content-between mt-4">
-            {page > 0 ? (
-              <Button variant="secondary" onClick={prevPage}>Back</Button>
-            ) : <span />}
-
+            {page > 0 ? <Button variant="secondary" onClick={prevPage}>Back</Button> : <span />}
             {page < formSteps.length - 1 ? (
               <Button type="button" onClick={nextPage}>Next</Button>
             ) : (

@@ -1,16 +1,16 @@
 import React from 'react';
 import DynamicNavbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
+import { DeathFormWizard } from 'registers-module';
+
 
 function App() {
   const userRole = 'admin'; // Role can be dynamic based on login
 
   return (
     <div>
-      <h1>Testing git teams</h1>
-      <h1>try new</h1>
       <DynamicNavbar userRole={userRole} />
-      <Dashboard />
+      <DeathFormWizard/>
     </div>
   );
 }
