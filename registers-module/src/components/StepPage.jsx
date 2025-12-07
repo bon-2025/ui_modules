@@ -6,7 +6,7 @@ export default function StepPage({ sections, register, errors, watch, setValue }
     <>
       {sections.map((section, index) => (
         <div key={index} className="mb-4">
-          <h4 className="mb-3 text-uppercase fw-bold">{section.section}</h4>
+          <h5 className="mb-3 text-uppercase fw-bold">{section.section}</h5>
           <div className="row g-3">
             {section.fields.map((field) => (
               <DynamicField

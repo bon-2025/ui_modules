@@ -12,15 +12,18 @@ export default function DynamicField({ field, register, errors, watch }) {
   const watchedValue = field.type === "text" ? watch(field.name) || "" : undefined;
 
   return (
-    <div className="col-12 col-md-6">
+    <>
+    <div className="col-12 col-md-3">
       <Form.Group className="mb-2">
         {field.type === "text" && (<TextField field={field} register={register} error={error} value={watchedValue} />)}
         {field.type === "date" && <DateField field={field} register={register} error={error} />}
         {field.type === "select" && <SelectField field={field} register={register} error={error} />}
         {field.type === "cemetery" && <CemeterySelectField field={field} register={register} error={error} />}
         {field.type === "lot" && <LotSelectField field={field} register={register} error={error} />}
-        {field.type === "address" && ( <AddressField field={field} register={register} watch={watch} errors={errors} />)}
       </Form.Group>
     </div>
+    {field.type === "address" && ( <AddressField field={field} register={register} watch={watch} errors={errors} />)}
+    </>
+    
   );
 }

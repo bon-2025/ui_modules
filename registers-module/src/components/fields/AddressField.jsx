@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Form } from "react-bootstrap";
+import { Form, Row, Col } from "react-bootstrap";
 import {
   regions as fetchRegions,
   provinces as fetchProvinces,
@@ -39,96 +39,35 @@ export default function AddressField({ field, register, watch, errors }) {
     fetchBarangays(city).then(setBarangayList);
   }, [city]);
 
-  console.log(errors)
+  const renderSelect = (label, name, value, onChange, list, keyField, disabled) => (
+    <>
+      <Form.Label>{label}</Form.Label>
+      <Form.Select
+        {...register(name)}
+        value={value}
+        onChange={onChange}
+        disabled={disabled}
+        isInvalid={!!errors?.[field.name]?.[keyField]}
+      >
+        <option value="">Select {label}</option>
+        {list.map((item) => (
+          <option key={item.psgcCode || item.id} value={item.psgcCode || item.id}>
+            {item.name}
+          </option>
+        ))}
+      </Form.Select>
+      <Form.Control.Feedback type="invalid">
+        {errors?.[field.name]?.[keyField]?.message}
+      </Form.Control.Feedback>
+    </>
+  );
 
   return (
-    <>
-      <div className="col-12 col-md-12">
-        <Form.Label>{field.label} - Region</Form.Label>
-        <Form.Select
-          {...register(`${field.name}.region`)}
-          value={region}
-          onChange={(e) => setRegion(e.target.value)}
-        >
-          <option value="">Select Region</option>
-          {regionList.map((r) => (
-            <option key={r.psgcCode} value={r.psgcCode}>
-              {r.name}
-            </option>
-          ))}
-        </Form.Select>
-        {errors?.[field.name]?.region && (
-          <Form.Text className="text-danger">
-            {errors[field.name].region.message}
-          </Form.Text>
-        )}
-      </div>
-
-      <div className="col-12 col-md-12">
-        <Form.Label>{field.label} - Province</Form.Label>
-        <Form.Select
-          {...register(`${field.name}.province`)}
-          value={province}
-          onChange={(e) => setProvince(e.target.value)}
-          disabled={!region}
-        >
-          <option value="">Select Province</option>
-          {provinceList.map((p) => (
-            <option key={p.psgcCode || p.id} value={p.psgcCode || p.id}>
-              {p.name}
-            </option>
-          ))}
-        </Form.Select>
-        {errors?.[field.name]?.province && (
-          <Form.Text className="text-danger">
-            {errors[field.name].province.message}
-          </Form.Text>
-        )}
-      </div>
-
-      <div className="col-12 col-md-12">
-        <Form.Label>{field.label} - City/Municipality</Form.Label>
-        <Form.Select
-          {...register(`${field.name}.city`)}
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          disabled={!province}
-        >
-          <option value="">Select City</option>
-          {cityList.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </Form.Select>
-        {errors?.[field.name]?.city && (
-          <Form.Text className="text-danger">
-            {errors[field.name].city.message}
-          </Form.Text>
-        )}
-      </div>
-
-      <div className="col-12 col-md-12">
-        <Form.Label>{field.label} - Barangay</Form.Label>
-        <Form.Select
-          {...register(`${field.name}.barangay`)}
-          value={barangay}
-          onChange={(e) => setBarangay(e.target.value)}
-          disabled={!city}
-        >
-          <option value="">Select Barangay</option>
-          {barangayList.map((b) => (
-            <option key={b.psgcCode} value={b.psgcCode}>
-              {b.name}
-            </option>
-          ))}
-        </Form.Select>
-        {errors?.[field.name]?.barangay && (
-          <Form.Text className="text-danger">
-            {errors[field.name].barangay.message}
-          </Form.Text>
-        )}
-      </div>
-    </>
+    <Row className="mb-3">
+      <Col>{renderSelect("Region", `${field.name}.region`, region, e => setRegion(e.target.value), regionList, "region", false)}</Col>
+      <Col>{renderSelect("Province", `${field.name}.province`, province, e => setProvince(e.target.value), provinceList, "province", !region)}</Col>
+      <Col>{renderSelect("City", `${field.name}.city`, city, e => setCity(e.target.value), cityList, "city", !province)}</Col>
+      <Col>{renderSelect("Barangay", `${field.name}.barangay`, barangay, e => setBarangay(e.target.value), barangayList, "barangay", !city)}</Col>
+    </Row>
   );
 }

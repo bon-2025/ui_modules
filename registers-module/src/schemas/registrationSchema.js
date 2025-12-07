@@ -45,8 +45,7 @@ const personalInfoSchema = z
 
     ageAtDeath: z
       .string()
-      .optional()
-      .refine((val) => !val || !isNaN(Number(val)), "Age must be a number"),
+      .optional(),
 
     citizenship: z
       .string()
@@ -63,6 +62,7 @@ const personalInfoSchema = z
     civilStatus: z.enum(["Single", "Married", "Widowed", "Separated"], {
       errorMap: () => ({ message: "Civil Status is required" }),
     }),
+    occupation: z.string()
   })
 
 
@@ -108,6 +108,8 @@ const parentInfoSchema = z.object({
     .trim()
     .nonempty("Mother's Last Name is required")
     .regex(/^[A-Za-z\s'-]+$/, "Mother's Last Name must contain only letters"),
+
+    causeOfDeath: z.string()
 });
 
 
@@ -135,7 +137,7 @@ const contractInfoSchema = z
       .max(9, "Permit Number must be exactly 9 digits"),
 
 
-    cemeteryName: z
+    cemeteryArea: z
       .string()
       .trim()
       .nonempty("Cemetery Name is required")
@@ -156,6 +158,8 @@ const contractInfoSchema = z
       .string()
       .nonempty("End Date is required")
       .refine((v) => !isNaN(Date.parse(v)), "Invalid End Date"),
+
+
   })
 
 export const contactInfoSchema = z.object({

@@ -4,14 +4,10 @@ export const personalInfoFields = [
   { name: "firstName", label: "First Name", type: "text" },
   { name: "middleName", label: "Middle Name", type: "text" },
   { name: "suffix", label: "Suffix Name", type: "text" },
-
   { name: "sex", label: "Sex", type: "select", options: ["Male", "Female"] },
-
   { name: "dateOfBirth", label: "Date of Birth", type: "date" },
   { name: "dateOfDeath", label: "Date of Death", type: "date" },
-
   { name: "ageAtDeath", label: "Age at Death", type: "text", disabled: true },
-
   { name: "citizenship", label: "Citizenship", type: "text" },
   { name: "religion", label: "Religion", type: "text" },
   {
@@ -20,6 +16,7 @@ export const personalInfoFields = [
     type: "select",
     options: ["Single", "Married", "Widowed", "Separated"],
   },
+   { name: "occupation", label: "Occupation", type: "text" },
 ];
 
 // STEP 1 — PARENTS' INFORMATION
@@ -27,49 +24,97 @@ export const parentInfoFields = [
   { name: "firstNameOfFather", label: "Father's First Name", type: "text" },
   { name: "middleNameOfFather", label: "Father's Middle Name", type: "text" },
   { name: "lastNameOfFather", label: "Father's Last Name", type: "text" },
-
   { name: "firstNameOfMother", label: "Mother's First Name", type: "text" },
   { name: "middleNameOfMother", label: "Mother's Middle Name", type: "text" },
   { name: "lastNameOfMother", label: "Mother's Last Name", type: "text" },
+  { name: "causeOfDeath", label: "Cause's Of Death", type: "text" },
 ];
 
-// STEP 1 — ADDRESSES
-export const addressFields = [
+export const residentAddress = [
   { name: "residence", label: "Residence Address", type: "address" },
-  { name: "placeOfDeath", label: "Place of Death", type: "address" },
-  { name: "cemeteryAddress", label: "Address of Cemetery", type: "text" },
+];
+export const placeOfDeath = [
+ { name: "placeOfDeath", label: "Place of Death", type: "address" },
+];
+export const addressOfCemetery = [
+ { name: "cemeteryAddress", label: "Address of Cemetery", type: "text" },
 ];
 
 // FINAL STEP 1 EXPORT
 export const step1Fields = [
   { section: "Personal Information Of Deceased Person", fields: personalInfoFields },
   { section: "Parents Information", fields: parentInfoFields },
-  { section: "Addresses", fields: addressFields },
+  { section: "Residence Address", fields: residentAddress },
+  { section: "Place Of Death", fields: placeOfDeath },
+  { section: "Address Of Cemetery", fields: addressOfCemetery },
 ];
 
 export const cemeteries = [
-  { id: 1, name: "Greenwood Cemetery", address: "123 Main St", lots: ["Lot A1", "Lot A2", "Lot B1"] },
-  { id: 2, name: "Sunset Memorial", address: "456 Oak Ave", lots: ["Lot C1", "Lot C2"] },
-  { id: 3, name: "Peaceful Rest", address: "789 Pine Rd", lots: [] },
+  { 
+    id: 1, 
+    name: "Greenwood Cemetery", 
+    address: "123 Main St", 
+    lots: [
+      { id: 101, label: "Lot A1" },
+      { id: 102, label: "Lot A2" },
+      { id: 103, label: "Lot B1" },
+    ]
+  },
+  { 
+    id: 2, 
+    name: "Sunset Memorial", 
+    address: "456 Oak Ave", 
+    lots: [
+      { id: 201, label: "Lot C1" },
+      { id: 202, label: "Lot C2" },
+    ]
+  },
+  { 
+    id: 3, 
+    name: "Peaceful Rest", 
+    address: "789 Pine Rd", 
+    lots: [] 
+  },
 ];
 
+
 export const contractInfoFields = [
-  { name: "permitNumber", label: "Burial Permit Number", type: "text" },
-  { 
-    name: "cemeteryName", 
-    label: "Cemetery Name", 
-    type: "cemetery", 
-    options: cemeteries.map(c => ({ label: c.name, value: c.name })) 
-  },
- // { name: "cemeteryLocation", label: "Cemetery Location", type: "text" },
+  { name: "permitNumber", label: "Burial Permit Number", type: "text", placeholder: "XXXXXXXXX" },
+  { name: "cemeteryName", label: "Cemetry Name", type: "text" },
   { name: "startDate", label: "Start Date / Date of Internment", type: "date" },
   { name: "endDate", label: "End Date", type: "date" },
+  { name: "disposition", label: "Disposition Of Remains", type: "text" },
   { 
-    name: "cemeteryLot", 
-    label: "Cemetery Lot", 
+    name: "cemeteryAddress", 
+    label: "Cemetery Address", 
     type: "select", 
-    options: []
+    options: ["1", "2"]  
   },
+  { 
+    name: "infectious", 
+    label: "Infectious", 
+    type: "select", 
+    options: ["Yes", "No"]  
+  },
+  { 
+    name: "bodyEmbalmed", 
+    label: "Body Embalmed", 
+    type: "select", 
+    options: ["Yes", "No"] 
+  },
+  { 
+    name: "cemeteryArea", 
+    label: "Cemetery Area", 
+    type: "cemetery", 
+    options: cemeteries.map(c => ({ label: c.name, value: c.id })) 
+  },
+  {
+    name: "cemeteryLot",
+    label: "Cemetery Lot",
+    type: "lot",
+    options: [] // dynamically replaced
+  }
+
 ]; 
 export const contactInfoFields = [
   { name: "firstName", label: "Contact First Name", type: "text" },

@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { deathFormSchema } from "./schemas/registrationSchema";
 import { deathFormDefaultValues } from "./utils/deathFormDefaultValues";
 import { formSteps, cemeteries } from "./utils/fields";
+import { formatAge } from "./utils/ageUtils";
 import StepPage from "./components/StepPage";
 import SuccessModal from "./shared/SuccessModal";
 import ErrorModal from "./shared/ErrorModal";
@@ -53,21 +54,40 @@ export default function DeathFormWizard() {
   }, [dob, dod, setValue]);
 
   // HANDLE DYNAMIC LOT OPTIONS (Step 2)
-  const selectedCemetery = watch("cemeteryName");
+  const selectedCemetery = watch("cemeteryArea");
   const [lotOptions, setLotOptions] = useState([]);
+
   useEffect(() => {
     if (selectedCemetery) {
-      const cemetery = cemeteries.find(c => c.name === selectedCemetery);
-      setValue("cemeteryLocation", cemetery?.address || "");
-      const lots = cemetery?.lots.map(l => ({ label: l, value: l })) || [];
+      const cemetery = cemeteries.find(c => c.id === Number(selectedCemetery));
+
+      // Set cemetery address (optional)
+      setValue("cemeteryAddress", cemetery?.address || "");
+
+      // LOT OPTIONS → now using IDs
+      const lots = cemetery?.lots.map(lot => ({
+        label: lot.label,
+        value: lot.id
+      })) || [];
+
       setLotOptions(lots);
+
+      // Reset lot selection
       setValue("cemeteryLot", "");
     } else {
       setLotOptions([]);
-      setValue("cemeteryLocation", "");
+      setValue("cemeteryAddress", "");
       setValue("cemeteryLot", "");
     }
-  }, [selectedCemetery, setValue]);
+  }, [selectedCemetery]);
+
+
+  useEffect(() => {
+  if (dob && dod) {
+    const ageStr = formatAge(dob, dod);
+    setValue("ageAtDeath", ageStr);
+  }
+}, [dob, dod, setValue]);
 
   // NEXT PAGE
   const nextPage = async () => {
@@ -126,14 +146,17 @@ export default function DeathFormWizard() {
   const currentSections = formSteps[page].map(section => ({
     ...section,
     fields: section.fields.map(f =>
-      f.name === "cemeteryLot" ? { ...f, options: lotOptions, type: "lot" } : f
+      f.name === "cemeteryLot"
+        ? { ...f, options: lotOptions }
+        : f
     )
   }));
+
 
   return (
     <Container className="py-4">
       <Card className="p-4 shadow">
-        <h3>Step {page + 1}</h3>
+        <h2 className="text-center m-4">Step {page + 1}</h2>
 
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <StepPage
