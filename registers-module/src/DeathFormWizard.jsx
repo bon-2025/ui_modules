@@ -1,15 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Container, Card, Button } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { deathFormSchema } from "./schemas/registrationSchema";
+
+import { deathFormSchema } from "./schemas/deathFormSchema";
 import { deathFormDefaultValues } from "./utils/deathFormDefaultValues";
-import { formSteps, cemeteries } from "./utils/fields";
-import { formatAge } from "./utils/ageUtils";
+import { formSteps } from "./utils/fields";
+
 import StepPage from "./components/StepPage";
 import SuccessModal from "./shared/SuccessModal";
 import ErrorModal from "./shared/ErrorModal";
-import { regions, provinces, cities, barangays } from "phil-address";
+
+import { registerUser } from "./services/registrationService";
+import { convertAddress } from "./utils/addressUtils";
+
+import { useAutoAge } from "./hooks/useAutoAge";
+import { useCemeteryLots } from "./hooks/useCemeteryLots";
+import { useAutoEndDate } from "./hooks/useAutoEndDate";
 
 export default function DeathFormWizard() {
   const [page, setPage] = useState(0);
@@ -24,72 +31,28 @@ export default function DeathFormWizard() {
     defaultValues: deathFormDefaultValues,
   });
 
-  const { watch, setValue, trigger, register, formState: { errors } } = form;
+  const { watch, setValue, trigger, register, formState: { errors }, handleSubmit } = form;
 
-  // AUTO CALCULATE AGE
+  // WATCHED VALUES
   const dob = watch("dateOfBirth");
   const dod = watch("dateOfDeath");
   const startDate = watch("startDate");
+  const cemeteryArea = watch("cemeteryArea");
 
-  useEffect(() => {
-    if (!startDate) return;
+  // HOOKS
+  useAutoEndDate(startDate, setValue);
+  useAutoAge(dob, dod, setValue);
+  const lotOptions = useCemeteryLots(cemeteryArea, setValue);
 
-    const start = new Date(startDate);
-    const end = new Date(start);
-    end.setFullYear(start.getFullYear() + 5);
-    const formatted = end.toISOString().split("T")[0];
+  // DYNAMIC LOTS IN FORM STEPS
+  const currentSections = formSteps[page].map(section => ({
+    ...section,
+    fields: section.fields.map(f =>
+      f.name === "cemeteryLot" ? { ...f, options: lotOptions } : f
+    )
+  }));
 
-    setValue("endDate", formatted, { shouldValidate: true });
-  }, [startDate, setValue]);
-
-  useEffect(() => {
-    if (dob && dod) {
-      const birth = new Date(dob);
-      const death = new Date(dod);
-      let age = death.getFullYear() - birth.getFullYear();
-      const monthDiff = death.getMonth() - birth.getMonth();
-      if (monthDiff < 0 || (monthDiff === 0 && death.getDate() < birth.getDate())) age--;
-      setValue("ageAtDeath", age.toString());
-    }
-  }, [dob, dod, setValue]);
-
-  // HANDLE DYNAMIC LOT OPTIONS (Step 2)
-  const selectedCemetery = watch("cemeteryArea");
-  const [lotOptions, setLotOptions] = useState([]);
-
-  useEffect(() => {
-    if (selectedCemetery) {
-      const cemetery = cemeteries.find(c => c.id === Number(selectedCemetery));
-
-      // Set cemetery address (optional)
-      setValue("cemeteryAddress", cemetery?.address || "");
-
-      // LOT OPTIONS → now using IDs
-      const lots = cemetery?.lots.map(lot => ({
-        label: lot.label,
-        value: lot.id
-      })) || [];
-
-      setLotOptions(lots);
-
-      // Reset lot selection
-      setValue("cemeteryLot", "");
-    } else {
-      setLotOptions([]);
-      setValue("cemeteryAddress", "");
-      setValue("cemeteryLot", "");
-    }
-  }, [selectedCemetery]);
-
-
-  useEffect(() => {
-  if (dob && dod) {
-    const ageStr = formatAge(dob, dod);
-    setValue("ageAtDeath", ageStr);
-  }
-}, [dob, dod, setValue]);
-
-  // NEXT PAGE
+  // NEXT PAGE VALIDATION
   const nextPage = async () => {
     const nestedFields = formSteps[page].flatMap(section =>
       section.fields.flatMap(f =>
@@ -99,8 +62,8 @@ export default function DeathFormWizard() {
       )
     );
 
-    // DOB > DOD check
-    if ((nestedFields.includes("dateOfBirth") || nestedFields.includes("dateOfDeath")) && dob && dod) {
+    // Additional custom check
+    if (nestedFields.includes("dateOfBirth") && nestedFields.includes("dateOfDeath")) {
       if (new Date(dob) > new Date(dod)) {
         setShowDateError(true);
         return;
@@ -116,49 +79,27 @@ export default function DeathFormWizard() {
   // FINAL SUBMIT
   const onSubmit = async (data) => {
     try {
-      const convert = async (addr) => {
-        const reg = await regions();
-        const prov = await provinces(addr.region);
-        const cts = await cities(addr.province);
-        const brg = await barangays(addr.city);
-
-        return {
-          region: reg.find(r => r.psgcCode === addr.region)?.name || "",
-          province: prov.find(p => p.psgcCode === addr.province || p.id === addr.province)?.name || "",
-          city: cts.find(c => c.psgcCode === addr.city || c.id === addr.city)?.name || "",
-          barangay: brg.find(b => b.id === addr.barangay)?.name || "",
-        };
+      const finalPayload = {
+        ...data,
+        residence: await convertAddress(data.residence),
+        placeOfDeath: await convertAddress(data.placeOfDeath)
       };
 
-      data.residence = await convert(data.residence);
-      data.placeOfDeath = await convert(data.placeOfDeath);
-
-      console.log("FINAL DATA:", data);
-      setShowSuccess(true);
+      const response = await registerUser(finalPayload);
+      if (response.success) setShowSuccess(true);
+      else throw new Error("Registration failed.");
     } catch (err) {
-      console.error(err);
-      setErrorMessage("Address conversion failed.");
+      setErrorMessage(err.message);
       setShowError(true);
     }
   };
-
-  // DYNAMICLY ADJUST LOT OPTIONS IN Step2
-  const currentSections = formSteps[page].map(section => ({
-    ...section,
-    fields: section.fields.map(f =>
-      f.name === "cemeteryLot"
-        ? { ...f, options: lotOptions }
-        : f
-    )
-  }));
-
 
   return (
     <Container className="py-4">
       <Card className="p-4 shadow">
         <h2 className="text-center m-4">Step {page + 1}</h2>
 
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <StepPage
             sections={currentSections}
             register={register}
@@ -171,6 +112,7 @@ export default function DeathFormWizard() {
             {page > 0 ? (
               <Button variant="secondary" onClick={prevPage}>Back</Button>
             ) : <span />}
+
             {page < formSteps.length - 1 ? (
               <Button type="button" onClick={nextPage}>Next</Button>
             ) : (
