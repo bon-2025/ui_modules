@@ -72,22 +72,61 @@ export default function DeathFormWizard() {
 
   const prevPage = () => setPage(p => p - 1);
 
-  const onSubmit = async (data) => {
-    try {
-      const finalPayload = {
-        ...data,
-        residence: await convertAddress(data.residence),
-        placeOfDeath: await convertAddress(data.placeOfDeath)
-      };
+const onSubmit = async (data) => {
+  try {
+    const finalPayload = {
+      personalInfoDTO: {
+        firstName: data.firstName,
+        middleName: data.middleName,
+        lastName: data.lastName,
+        suffix: data.suffix,
+        sex: data.sex,
+        dateOfBirth: data.dateOfBirth,
+        dateOfDeath: data.dateOfDeath,
+        ageAtDeath: data.ageAtDeath
+      },
+      parentsInfoDTO: {
+        fatherFirstName: data.firstNameOfFather,
+        fatherMiddleName: data.middleNameOfFather,
+        fatherLastName: data.lastNameOfFather,
+        motherFirstName: data.firstNameOfMother,
+        motherMiddleName: data.middleNameOfMother,
+        motherLastName: data.lastNameOfMother,
+      },
+      deathDetailsDTO: {
+        causeOfDeath: data.causeOfDeath,
+        bodyEmbalmed: data.bodyEmbalmed,
+        disposition: data.position,
+        infectious: data.infectious,
+        cemeteryAddress: data.cemeteryAddress,
+      },
+      contactInfoDTO: {
+        phoneNumber: data.phoneNumber,
+        email: data.email,
+        position: data.position,
+      },
+      contractDTO: {
+        permitNumber: data.permitNumber,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        cemeteryArea: data.cemeteryArea,
+        cemeteryLot: data.cemeteryLot,
+      },
+      residenceDTO: await convertAddress(data.residence),
+      placeOfDeathDTO: await convertAddress(data.placeOfDeath),
+    };
 
-      const response = await registerUser(finalPayload);
-      if (response.success) setShowSuccess(true);
-      else throw new Error("Registration failed.");
-    } catch (err) {
-      setErrorMessage(err.message);
-      setShowError(true);
-    }
-  };
+    const response = await registerUser(finalPayload);
+
+    if (response.success) setShowSuccess(true);
+    else throw new Error("Registration failed.");
+  } catch (err) {
+    setErrorMessage(err.message);
+    setShowError(true);
+  }
+};
+
+
 
   return (
     <Container className="py-4">

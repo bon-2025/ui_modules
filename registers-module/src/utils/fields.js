@@ -4,7 +4,7 @@ export const personalInfoFields = [
   { name: "firstName", label: "First Name", type: "text" },
   { name: "middleName", label: "Middle Name", type: "text" },
   { name: "suffix", label: "Suffix Name", type: "text" },
-  { name: "sex", label: "Sex", type: "select", options: ["Male", "Female"] },
+  { name: "sex", label: "Sex", type: "select", options: ["MALE", "FEMALE", "OTHER"] },
   { name: "dateOfBirth", label: "Date of Birth", type: "date" },
   { name: "dateOfDeath", label: "Date of Death", type: "date" },
   { name: "ageAtDeath", label: "Age at Death", type: "text", disabled: true },
@@ -14,7 +14,7 @@ export const personalInfoFields = [
     name: "civilStatus",
     label: "Civil Status",
     type: "select",
-    options: ["Single", "Married", "Widowed", "Separated"],
+    options: ["SINGLE", "MARRIED", "WIDOWED", "DIVORCED", "SEPARATED", "OTHER"],
   },
    { name: "occupation", label: "Occupation", type: "text" },
 ];
@@ -36,9 +36,6 @@ export const residentAddress = [
 export const placeOfDeath = [
  { name: "placeOfDeath", label: "Place of Death", type: "address" },
 ];
-export const addressOfCemetery = [
- { name: "cemeteryAddress", label: "Address of Cemetery", type: "text" },
-];
 
 // FINAL STEP 1 EXPORT
 export const step1Fields = [
@@ -46,7 +43,7 @@ export const step1Fields = [
   { section: "Parents Information", fields: parentInfoFields },
   { section: "Residence Address", fields: residentAddress },
   { section: "Place Of Death", fields: placeOfDeath },
-  { section: "Address Of Cemetery", fields: addressOfCemetery },
+  //{ section: "Address Of Cemetery", fields: addressOfCemetery },
 ];
 
 export const cemeteries = [
@@ -85,12 +82,6 @@ export const contractInfoFields = [
   { name: "endDate", label: "End Date", type: "date" },
   { name: "disposition", label: "Disposition Of Remains", type: "text" },
   { 
-    name: "cemeteryAddress", 
-    label: "Cemetery Address", 
-    type: "select", 
-    options: ["1", "2"]  
-  },
-  { 
     name: "infectious", 
     label: "Infectious", 
     type: "select", 
@@ -117,10 +108,10 @@ export const contractInfoFields = [
 
 ]; 
 export const contactInfoFields = [
-  { name: "firstName", label: "Contact First Name", type: "text" },
-  { name: "middleName", label: "Contact Middle Name", type: "text" },
-  { name: "lastName", label: "Contact Last Name", type: "text" },
-  { name: "suffix", label: "Suffix Name", type: "text" },
+  { name: "contactFirstName", label: "Contact First Name", type: "text" },
+  { name: "contactMiddleName", label: "Contact Middle Name", type: "text" },
+  { name: "contactLastName", label: "Contact Last Name", type: "text" },
+  { name: "contactSuffix", label: "Suffix Name", type: "text" },
   { name: "position", label: "Position", type: "text" },
   { name: "phoneNumber", label: "Contact Number", type: "text" },
   { name: "email", label: "Email Address", type: "text" },

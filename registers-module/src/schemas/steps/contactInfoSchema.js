@@ -1,17 +1,17 @@
 import { z } from "zod";
 
 export const contactInfoSchema = z.object({
-  firstName: z.string().trim().nonempty("Contact First Name is required")
+  contactFirstName: z.string().trim().nonempty("Contact First Name is required")
     .regex(/^[A-Za-z\s'-]+$/, "First Name must contain only letters"),
 
-  middleName: z.string().trim()
+  contactMiddleName: z.string().trim()
     .regex(/^[A-Za-z\s'-]*$/, "Middle Name must contain letters")
     .optional().or(z.literal("")),
 
-  lastName: z.string().trim().nonempty("Contact Last Name is required")
+  contactLastName: z.string().trim().nonempty("Contact Last Name is required")
     .regex(/^[A-Za-z\s'-]+$/, "Last Name must contain only letters"),
 
-  suffix: z.string().trim()
+  contactSuffix: z.string().trim()
     .regex(/^[A-Za-z.]*$/, "Suffix must be alphabetic")
     .optional().or(z.literal("")),
 

@@ -15,7 +15,7 @@ export const personalInfoSchema = z.object({
     .regex(/^[A-Za-z.]*$/, "Suffix must be alphabetic")
     .optional().or(z.literal("")),
 
-  sex: z.enum(["Male", "Female"], { errorMap: () => ({ message: "Sex is required" }) }),
+  sex: z.enum(["MALE", "FEMALE", "OTHER"], { errorMap: () => ({ message: "Sex is required" }) }),
 
   dateOfBirth: z.string().nonempty("Date of Birth is required")
     .refine(v => !isNaN(Date.parse(v)), "Invalid Date of Birth"),
@@ -32,7 +32,7 @@ export const personalInfoSchema = z.object({
     .regex(/^[A-Za-z\s'-]*$/, "Religion must contain only letters")
     .optional().or(z.literal("")),
 
-  civilStatus: z.enum(["Single", "Married", "Widowed", "Separated"], {
+  civilStatus: z.enum(["SINGLE", "MARRIED", "WIDOWED", "SEPARATED", "OTHER"], {
     errorMap: () => ({ message: "Civil Status is required" })
   }),
 

@@ -1,14 +1,14 @@
 {
   "name": "registers-module",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "private": false,
   "type": "module",
   "main": "dist/index.umd.js",
   "module": "dist/index.es.js",
   "peerDependencies": {
     "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "react-bootstrap": "^2.10.10"
+    "react-bootstrap": "^2.10.10",
+    "react-dom": "^19.2.0"
   },
   "scripts": {
     "dev": "vite",
@@ -17,14 +17,17 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
+    "axios": "^1.13.2",
     "bootstrap": "^5.3.8",
+    "phil-address": "^2.0.1",
+    "react-bootstrap-icons": "^1.11.6",
     "react-hook-form": "^7.68.0",
     "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^5.1.1",
-    "vite": "^7.2.4",
     "@types/react": "^19.2.5",
-    "@types/react-dom": "^19.2.3"
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "vite": "^7.2.4"
   }
 }
